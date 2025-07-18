@@ -17,4 +17,9 @@ async function addNewUser(username: string, passwordHash: string): Promise<User 
     return newUser;
 }
 
-export { getUserByUsername, addNewUser};
+async function getUserById(userId: string): Promise< User | null> {
+    const user = await userRepository.findOne({where: {userId}})
+    return user;
+}
+
+export { getUserByUsername, addNewUser, getUserById};
