@@ -3,7 +3,7 @@ import { DataSource  } from 'typeorm';
 // import { glob } from 'glob';
 // import {resolve} from 'path'
 
-if (!process.env.DATABASE_NAME || typeof process.env.DATABASE_NAME !== 'string') {
+if (!process.env.DB_NAME || typeof process.env.DB_NAME !== 'string') {
   throw new Error('DATABASE_NAME environment variable is required in .env file');
 }
 
@@ -21,7 +21,7 @@ if (!process.env.DATABASE_NAME || typeof process.env.DATABASE_NAME !== 'string')
 // const entities = await loadEntities();
 // console.log(entities);
 
-import { Test } from './entities/Test';
+
 import { User } from './entities/User';
 import { Link } from './entities/Link';
 
@@ -29,14 +29,14 @@ export const AppDataSource = new DataSource({
   synchronize: true,
   logging: false,
   // entities,
-  entities: [Test, User, Link],
+  entities: [ User, Link],
   type: 'mysql',
   //database: process.env.DATABASE_NAME,
-  host: 'localhost',
-  port: 3306,
-  username: 'root',
-  password: 'Random21$',
-  database: 'SampleDB'
+  host: process.env.DB_HOST,
+  port: parseInt(process.env.DB_PORT),
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
 });
 
 await AppDataSource.initialize();

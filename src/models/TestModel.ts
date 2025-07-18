@@ -1,11 +1,11 @@
-import { AppDataSource } from '../dataSource';
-import { Test } from '../entities/Test';
+// import { AppDataSource } from '../dataSource';
+// import { Test } from '../entities/Test';
 
-const testRepository = AppDataSource.getRepository(Test);
+// const testRepository = AppDataSource.getRepository(Test);
 
-async function getTestById(testId: string): Promise<Test | null>{
-    const test = await testRepository.findOne({where: { testId } });
-    return test;
-}
+// async function getTestById(testId: string): Promise<Test | null>{
+//     const test = await testRepository.findOne({where: { testId } });
+//     return test;
+// }
 
-export { getTestById };
+// export { getTestById };
