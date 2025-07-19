@@ -4,6 +4,7 @@ import session from 'express-session';
 import MySQLStoreFactory from 'express-mysql-session';
 import { registarUser, login } from './controllers/UserController';
 
+
 const app: Express = express();
 const { PORT, COOKIE_SECRET, DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME } = process.env;
 
