@@ -1,5 +1,6 @@
 import { AppDataSource } from "../dataSource";
 import { User } from "../entities/User";
+import { linkRepository } from "./LinkModel";
 
 const userRepository = AppDataSource.getRepository(User);
 
@@ -22,4 +23,9 @@ async function getUserById(userId: string): Promise< User | null> {
     return user;
 }
 
-export { getUserByUsername, addNewUser, getUserById};
+async function getUserLinkCountById(userId: string): Promise<number>{
+    const count = await linkRepository.count({where: {user: { userId}}});
+    return count;
+}
+
+export { getUserByUsername, addNewUser, getUserById, getUserLinkCountById};
