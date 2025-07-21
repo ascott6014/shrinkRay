@@ -3,7 +3,7 @@ import express, { Express } from 'express';
 import session from 'express-session';
 import MySQLStoreFactory from 'express-mysql-session';
 import { registarUser, login } from './controllers/UserController';
-import { shortenUrl, getOriginalUrl } from './controllers/LinkController';
+import { shortenUrl, getOriginalUrl, getUserLinks } from './controllers/LinkController';
 
 
 const app: Express = express();
@@ -36,6 +36,7 @@ app.post("/api/users", registarUser);
 app.post("/api/login", login);
 app.post("/api/links", shortenUrl); // untested
 app.get("/:targetLinkId", getOriginalUrl); // untested
+app.get("/api/users/:targetUserId/links", getUserLinks); // untested
 
 
 app.listen(PORT, () => {

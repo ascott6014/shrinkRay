@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { parseDatabaseError } from "../utils/db-utils";
-import { getLinkByID, createLinkId, createNewLink, updateLinkVisits } from "../models/LinkModel";
+import { getLinkByID, createLinkId, createNewLink, updateLinkVisits, getLinksByUserId, getLinksByUserIdForOwnAccount } from "../models/LinkModel";
 import { getUserById, getUserLinkCountById } from "../models/UserModel";
 
 async function shortenUrl(req: Request, res: Response): Promise<void> {
@@ -57,4 +57,25 @@ async function getOriginalUrl(req: Request, res: Response): Promise<void> {
     
 }
 
-export { shortenUrl, getOriginalUrl };
+async function getUserLinks(req: Request, res: Response): Promise<void> {
+    const {targetUserId} = req.params as targetUserparams;
+
+    const targetUser = await getUserById(targetUserId);
+
+    if(!targetUser){
+        res.sendStatus(404);
+    }
+
+    const {userId} = req.session.authenticatedUser;
+
+    if (targetUserId === userId){
+        const links = await getLinksByUserIdForOwnAccount(targetUserId);
+        res.send(200).json(links);
+        return;
+    }
+
+    const links = await getLinksByUserId(targetUserId);
+    res.send(200).json(links);
+}
+
+export { shortenUrl, getOriginalUrl, getUserLinks };
