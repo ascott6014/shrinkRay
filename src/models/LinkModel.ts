@@ -25,6 +25,7 @@ async function createNewLink (originalUrl: string, linkId: string, creator: User
     newLink.linkId = linkId;
     newLink.originalUrl = originalUrl;
     newLink.user = creator;
+    newLink.lastAccessedOn = new Date();
 
     await linkRepository.save(newLink);
     return newLink;
@@ -75,4 +76,8 @@ async function getLinksByUserIdForOwnAccount(userId: string): Promise<Link[]> {
     
     return links;
 }
-export { getLinkByID, createLinkId, createNewLink, updateLinkVisits, getLinksByUserId, getLinksByUserIdForOwnAccount };
+
+async function deleteLinkByLinkId(linkId: string): Promise<void> {
+    await linkRepository.delete({linkId});
+}
+export { getLinkByID, createLinkId, createNewLink, updateLinkVisits, getLinksByUserId, getLinksByUserIdForOwnAccount, deleteLinkByLinkId };

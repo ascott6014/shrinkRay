@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { parseDatabaseError } from "../utils/db-utils";
-import { getLinkByID, createLinkId, createNewLink, updateLinkVisits, getLinksByUserId, getLinksByUserIdForOwnAccount } from "../models/LinkModel";
+import { getLinkByID, createLinkId, createNewLink, updateLinkVisits, getLinksByUserId, getLinksByUserIdForOwnAccount, deleteLinkByLinkId } from "../models/LinkModel";
 import { getUserById, getUserLinkCountById } from "../models/UserModel";
 
 async function shortenUrl(req: Request, res: Response): Promise<void> {
@@ -43,6 +43,7 @@ async function shortenUrl(req: Request, res: Response): Promise<void> {
 async function getOriginalUrl(req: Request, res: Response): Promise<void> {
     const {targetLinkId} = req.params as linkIdParams;
     const link = await getLinkByID(targetLinkId);
+    console.log(link);
 
     if (!link){
         res.sendStatus(404);
@@ -64,18 +65,53 @@ async function getUserLinks(req: Request, res: Response): Promise<void> {
 
     if(!targetUser){
         res.sendStatus(404);
+        return;
     }
 
     const {userId} = req.session.authenticatedUser;
 
     if (targetUserId === userId){
         const links = await getLinksByUserIdForOwnAccount(targetUserId);
-        res.send(200).json(links);
+        res.status(200).json(links);
         return;
     }
 
     const links = await getLinksByUserId(targetUserId);
-    res.send(200).json(links);
+    res.status(200).json(links);
 }
 
-export { shortenUrl, getOriginalUrl, getUserLinks };
+async function deleteLink(req: Request, res: Response): Promise<void> {
+    if (!req.session.isLoggedIn){  // not logged in
+        res.sendStatus(401);
+        return;
+    }
+
+    const { targetUserId, targetLinkId } = req.params as deleteLinkParams;
+    const { userId, isAdmin } = req.session.authenticatedUser;
+    // console.log("userid: ", userId, "\n targetUserId: ", targetUserId, "\n targetLinkId", targetLinkId);
+
+    if (!(targetUserId === userId || isAdmin)){ // not owner or admin
+        res.sendStatus(403);
+        return;
+    }
+
+    const link = getLinkByID(targetLinkId);
+    
+    if (!link){     // link not found
+        res.sendStatus(404);
+        return;
+    }
+
+    try {
+        await deleteLinkByLinkId(targetLinkId);
+        res.sendStatus(200);
+        return;
+    } catch (err) {
+        console.error(err);
+        const databaseErrorMessage = parseDatabaseError(err);
+        res.status(500).json(databaseErrorMessage);
+    }
+    
+}
+
+export { shortenUrl, getOriginalUrl, getUserLinks, deleteLink };

@@ -5,3 +5,8 @@ type newLinkRequest = {
 type linkIdParams = {
     targetLinkId: string;
 }
+
+type deleteLinkParams = {
+    targetUserId: string;
+    targetLinkId: string;
+}

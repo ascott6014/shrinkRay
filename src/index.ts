@@ -3,7 +3,7 @@ import express, { Express } from 'express';
 import session from 'express-session';
 import MySQLStoreFactory from 'express-mysql-session';
 import { registarUser, login } from './controllers/UserController';
-import { shortenUrl, getOriginalUrl, getUserLinks } from './controllers/LinkController';
+import { shortenUrl, getOriginalUrl, getUserLinks, deleteLink } from './controllers/LinkController';
 
 
 const app: Express = express();
@@ -20,7 +20,7 @@ const sessionStore = new MySQLStore({
 app.use(
     session({
         store: sessionStore,
-        secret: COOKIE_SECRET, // MAKE NOTE THAT THIS HAS TO BE AN ARRAY
+        secret: COOKIE_SECRET, 
         cookie: { maxAge: 8 * 60 * 60 * 1000}, // 8 hours
         name: 'session',
         resave: false,
@@ -30,13 +30,14 @@ app.use(
 
 app.use(express.json());
 
-//  endpoints
+//  endpointss
 
 app.post("/api/users", registarUser);
 app.post("/api/login", login);
-app.post("/api/links", shortenUrl); // untested
-app.get("/:targetLinkId", getOriginalUrl); // untested
-app.get("/api/users/:targetUserId/links", getUserLinks); // untested
+app.post("/api/links", shortenUrl); 
+app.get("/:targetLinkId", getOriginalUrl); 
+app.get("/api/users/:targetUserId/links", getUserLinks); 
+app.delete("/api/users/:targetUserId/links/:targetLinkId", deleteLink); 
 
 
 app.listen(PORT, () => {
